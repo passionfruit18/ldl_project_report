@@ -25,6 +25,7 @@ A sequence. A formula $\phi$ is satisfied by trace $\pi$ if it is satisfied from
 ... basic propositional stuff... $\pi, i \models \lnext\phi$ iff $\pi, (i+1) \models\phi$... $\pi, i \models \phi\luntil\psi$ iff either $\pi, i \models \psi$ or ($\pi, i \models \phi$ and $\pi, (i+1) \models \phi\luntil\psi$.
 The finite semantics is z. Finite sequence. What happens at the edge. Stuff mentioned in paper. Certain formulae equivalent. $\lalways \leventually \phi$ and $\leventually \lalways \phi.$
 They differ in aspects w.
+\red{would be nice to have a diagram of a trace}
 
 \subsection{How the finite setting differs: planning and service process modelling}
 \red{STUB}
@@ -83,10 +84,21 @@ e.g.
 It can also capture temporally extended goals.
 
 \subsection{limitations}
-
 Procedural execution constraints cannot be expressed in \ltlf.
-\cite{ldlfsynth}
-(i.e. programs)
+\cite{ldlfsynth} (i.e. programs)
+
+Especially in the context of planning, we see a limitation when we want to express
+``procedural execution constraints''. Essentially, when we want to have more structure in our actions;
+when we want to have `compound actions', which are basically programs.
+And this ties in very nicely with \ldlf since it is based on PDL which intrinsically has a notion of programs.
+Although it's a bit awkward because \ldlf mimcs LTL in not really having edge labels, or rather it
+gives up its edge labels for a sort of backwards-compatability with \ltlf, but then we need edge labels, so
+we must go the old route of encoding actions as propositions...
+
+Well, I suppose there are advantages to doing things this way, but I can't help but wonder
+what would happen if a more direct representation of actions was allowed...
+Well, one would want to keep linearity of the atomic actions,
+and then the only question is whether the thing still compiles nicely into AFAs?
 
 \subsection{Expressivity, complexity and the need for another formalism}
 
