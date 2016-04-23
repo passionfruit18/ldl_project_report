@@ -1,0 +1,155 @@
+
+
+\begin{comment}
+Note to writer:
+Important commands: (math mode)
+\di{x} writes x in diamond brackets
+\sq{x} '' in square brackets
+\prog  symbol for program, currently PI
+\vphi  alternate phi symbol (curly)
+\model symbol for a PDL/modal logic model
+\neg   logical negation symbol
+\end{comment}
+
+\section {Linear Dynamic Logic}
+
+Linear Dynamic Logic (LDL) is exactly Propositional Dynamic Logic (PDL)\cite{dynamic-logic} in syntax. However, its semantics or models are based on finite traces, like LTL. Thus to explain it we will take a detour through PDL.
+
+
+\subsection{Propositional Dynamic Logic}
+
+We will describe the syntax and semantics of PDL piecewise, and then put it all together at the end of this section.
+
+In PDL there are two entities, \emph{formulae} and \emph{programs}, which are mutually recursive. ``Programs'' are embedded into formulae by a \emph{modality}, and formulae into programs by a ``test construct'' which is like an assertion in programming.
+
+\subsubsection{PDL Programs}
+
+Now what is the sense of ``program'' here? There are no assignable variables as in normal programming-- this would require a domain, e.g. Int, Bool, Char, to assign from-- this is, in other words, a \emph{first-order} concept. We are dealing with \emph{propositional} logic here, so programs are considered at their most basic: as \emph{binary relations} between states.
+\begin{comment}
+In functional programming, programs are thought of as functions; this more general view allows for nondeterminism and partial functions.
+\end{comment}
+
+So, one of the things a \emph{model} $\model$ for PDL with \textit{atomic programs in the set $\prog_0$} must specify is a set of states $W$, and binary relations over the states that \textit{interpret} the atomic programs.
+
+For example, with $\prog_0 = \set{x, y, z}$, we might have a model $\model$ with  $W = \set{1,2,3}$, and $x_{\model} = \set{(1,3)}, y_{\model} = \set{(3,2)}, z_{\model} = \set{(1,2),(2,3),(1,3)}$.
+
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto]
+   \node[state] (q1)   {$1$};
+   \node[state] (q2) [above right=of q1] {$2$};
+   \node[state] (q3) [below right=of q2] {$3$};
+    \path[->]
+    (q1.340) edge node {x, z} (q3.200)
+    (q1)     edge node {z} (q2)
+    (q2.335) edge node {z} (q3.115)
+    (q3) edge node {y} (q2);
+\end{tikzpicture}
+
+Thus, executing program x at state 1, we know we will end up at state 3. Executing z at state 1, we may end up in state 2 or state 3. Just having atomic programs is a bit restrictive though-- we know we can get from 1 to 3 with one application of $x$, and 3 to 2 with $y$, but what if we can use $x$ \emph{or} $y$ in one step, or $x$ then $y$? Or, where can we get to by repeated applications of $z$? What we want is to be able to form the \emph{union}, \emph{composition}, and \emph{reflexive transitive closure}, respectively, of those relations. These correspond syntactically to the regular expression operators of \emph{addition} ($+$), \emph{concatenation} ($;$), and \emph{star} ($*$). Thus part of the syntactic definition for programs is:
+
+\begin{myGrammar}
+$\prog$: $\prog_0$; $\prog$ + $\prog$; $\prog$ \semi $\prog$; $\prog^*$
+\end{myGrammar}
+
+
+\noindent where $\prog_0$ is the atomic program set. We have left out the test construct for now, so the definition so far is \emph{test-free}.
+
+\subsubsection{PDL Formulae}
+
+Now we consider \emph{formulae}. PDL is a \emph{modal} logic, so formulae will be evaluated \emph{at specific states} in a given model. As we are dealing with propositional logic we will have the usual syntax
+
+\begin{myGrammar}
+$\vphi$: $\A$; $\neg \vphi$; $\vphi \lor \vphi$
+\end{myGrammar}
+
+\noindent where $\A$ is a proposition from the set of propositions $\prop$. Each state in the model must then have a propositional assignment over $\prop$. Alternatively, the model has a valuation $V$ such that $V(\A)(w)$ iff the proposition $\A$ holds at the state $w$.
+
+Additionally, we can add programs through modalities, with formulae of the form \begin{myGrammarPlus} $\vphi$: $\di{\prog}\vphi$. \end{myGrammarPlus} The semantics of this is that the formula $\di{x}\vphi$ holds at a state $u$ in a model $\model$, if and only if $\vphi$ holds at a state $v$ in $\model$ such that $u\ x_\model\ v$. That is, if `we can reach a state via $x$ where $\vphi$ holds'.
+
+The dual, $\sq{x}\vphi := \neg\di{x}\neg\vphi$, holds if $\vphi$ holds at all states reachable via $x$.
+
+Now we can complete the loop by embedding formulae into programs: the test construct \begin{myGrammarPlus} $\prog$: $\vphi?$ \end{myGrammarPlus} is interpreted as a relation that relates a state $w$ \emph{to itself} if and only if $\vphi$ holds at $w$. So, if it doesn't hold, the program $\vphi?$, and indeed any concatenated program $\vphi?x$, will reach no states from $w$.
+
+Thus we may express such programming constructs as
+
+
+
+$\<if>\ \vphi \<then>\ x \<else>\ y$, which is $(\vphi?x)+(\neg\vphi?y)$ (omitting the ; for concatenation of programs); and
+
+$\<while>\ \vphi \<do>\ x$, which is $(\vphi?x)^*;\neg\vphi?$ (remembering that a while loop terminates only when $\neg\vphi$ holds).
+
+Additionally, we can express the Hoare triple $\set{\vphi} x \set{\psi}$ as $\vphi \to \sq{x} \psi$. (If $\vphi$ holds, then after all executions of $x$, $\psi$ holds. Note that this version does not enforce termination, since $\sq{x}\vphi$ holds at any state that reaches nowhere via $x$.)
+
+\subsubsection{Listing of syntax and semantics}
+Here we list all the syntax and semantics of PDL for convenience.
+\begin{framed}
+\par \textbf{Syntax:}
+\par Programs:
+\begin{myGrammar}
+$\prog$: $\prog_0$; $\vphi?$; $\prog$ + $\prog$; $\prog$ \semi $\prog$; $\prog^*$
+\end{myGrammar}
+\par Formulae:
+\begin{myGrammar}
+$\vphi$: $\A$; $\neg \vphi$; $\vphi \lor \vphi$; $\di{\prog}\vphi$
+\end{myGrammar}
+\par \textbf{Semantics:}
+\par Models: $\model = (W,\set{x_\model}_{x \in \prog_0}, V)$ where $W$ is a set of states, $x_\model$ are the interpretations of each atomic program, and $V(A)(w)$ is true iff proposition $A$ holds at state $w$.
+
+Interpretation of programs:
+\begin{itemize}
+\item Base cases: \[
+  R_\model(x)=\begin{cases}
+               x_\model \quad \text{if $x$ is an atomic program}\\
+               \set{(w,w) | \model,w \models \vphi } \quad \text{if $x = \vphi?$}\\
+            \end{cases}
+\]
+
+\item Regular operations:\\
+\mbox{\inference[add(L)]{u\ x_\model\ v}
+                        {u\ (x+y)_\model\ v}
+$\quad$ \inference[add(R)]{u\ x_\model\ v}
+                         {u\ (y+x)_\model\ v}
+$\quad$ \inference[concat]{u\ x_\model\ v & v\ y_\model\ w}
+                          {u\ (x;y)_\model\ w}
+}
+\\
+
+\mbox{\inference[star(Reflexive)]{}{u\ (x^*)_\model\ u}$\quad$
+      \inference[star(Transitive)]{u\ x_\model\ v & v\ (x^*)_\model\ w}
+                            {u\ (x^*)_\model\ w}}
+\end{itemize}
+\par Entailment of formulae:
+\begin{itemize}
+\item $\model,w \models A$ iff $V(A)(w)$ for propositional $A$.
+\item The cases for $\neg$ and $\lor$ are as usual, staying at the same state.
+\item $\model,w \models \di{x}\vphi$ iff there exists $v$ such that $ w\ R_\model(x)\ v$ and $\model, v \models \vphi$
+\end{itemize}
+\end{framed}
+\subsection{LDL in terms of PDL}
+
+We may now understand LDL in terms of PDL.
+In the paper \cite{ldlf}, programs ($\prog$) are referred to as regular expressions ($\rho$). The atomic programs, written $\phi$ (not to be confused with $\vphi$), are propositional formulae over $\prop$ ($\bool{\prop}$) (a formula $\phi$ would represent the set of $\prop$-assignments which satisfy it, so $\bool{\prop}$ is finite up to this notion). We mentioned earlier that LDL models are a subset of PDL models.
+
+Formally,
+
+\begin{defnL}{ldl-model}
+An LDL model is a finite trace $\pi=\pi[0]...\pi[last]$ of length $n$, where $last = n-1$, and each $\pi[i]$ is (labelled with) a propositional assignment over $\prop$ (alternatively, is a member of $2^\prop$).
+\end{defnL}
+
+As a PDL model, it would be $\model = (W, \set{\phi_\model}_{\bool{\prop}}, V)$ where
+\begin{itemize}
+\item $W = \set{\pi[i]\ |\ 0 \leq i \leq last}$,
+\item $\phi_\model = \set{(i,i+i)\ |\ 0 \leq i \leq (last-1),\ \pi[i] \models \phi}$, and
+\item $V(A)(\pi[i])$ iff $\pi[i](A)$.
+\end{itemize}
+
+If we had a ``next'' relation $next=\set{(i,i+1)\ |\ 0 \leq i \leq (last - 1)}$, we could think of $\phi_\model$ as $(\phi?next)_\model$ (considering $\phi$ as a formula $\vphi$ rather than a regular expression $\rho$). As it is, we can define the LTL operator $\circ$, which is interpreted as $next$, by $\circ:=\di{true}$.
+
+\subsection{Examples of LDL formulae and models}
+
+\begin{itemize}
+    \item $\di{(\vphi_1?;true)^*}\vphi_2$ is the equivalent of the LTL formula $\vphi_1 \luntil \vphi_2$.
+    \item $\sq{c}\sq{a+b}true$ would be satisfied by (among others) any model starting with $\pi[0]$ a set \emph{not} containing $c$. The point $\pi[0]$ would in this case not have any outgoing $c$-edges, and hence the condition `` for all points $\pi[i]$ reachable by a $c$-edge, $\pi[i] \models \sq{a+b}true$ '' (which is the condition for $\sq{c}\sq{a+b}true$ to be satisfied at $\pi[0]$) is satisfied vacuously.
+
+\end{itemize}
+
+In the next section we will describe alternating finite automata, which are generalisations of nondeterministic finite automata that are convenient to use to decide the satisfiability problem for LDL on finite traces.

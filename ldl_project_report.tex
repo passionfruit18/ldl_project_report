@@ -1,0 +1,214 @@
+%%% basic stuff
+\documentclass[11pt, oneside]{article}
+\usepackage{geometry}
+\geometry{letterpaper}
+
+%%% Verbatim packages
+\usepackage{verbatim}
+\usepackage{fancyvrb}
+\DefineVerbatimEnvironment{code}{Verbatim}{fontsize=\small}
+
+\begin{comment}
+%%% Todo:
+
+> Write about LDL.
+>> Find out how to write context free grammars.
+>> Find out how to draw diagrams.
+> Modularise this document.
+> Share this document.
+> Link this document with the code somehow. Make each findable online from each other.
+
+\end{comment}
+
+\begin{comment}
+    %%% LaTeX maths codes 10 Oct
+
+    \mathcal{} � math calligraphic
+    font
+    \lor, \land, \to , \neg� logical or, logical and, right arrow, negation
+    \subseteq � subset or equal
+    \subset � strict subset
+    \supset, \supseteq
+    \in � element of
+    \forall, \exists
+    \Box, \Diamond � modal operators
+    \prime
+    \ell � cursive l
+    \models � entails
+    \Rightarrow implies
+    \bigcap�{i=1}^{n}� big intersection
+    \bigcup ""� big union
+    \bigwedge, \bigvee� big and, big or
+
+    { and } must be escaped
+    %%% LaTeX general codes
+    \textbf{} = bold
+    \newcommand {\comm}{definition of comm}
+    \newcommand {\comm}[n]{some function of e(#1)...e(#n)}
+
+
+    %%% math spacing
+
+    \quad
+    \, 3/18
+    \: 4/18
+    \; 5/18
+    \! -3/18
+    \  (space after \) normal space
+\end{comment}
+
+%%% Fonts
+\usepackage{lmodern}
+
+%%% Citation
+\usepackage{cite}
+
+%%% LTL and LDL Syntax; ``definition'' apparatus
+\usepackage{bnf}
+\newcommand{\semi}{; } % since ; is a special character for the bnf package
+\newcommand{\model}{\mathfrak{M} } % letter for "model"
+\newenvironment{myGrammar} % The grammar formmating I'll be using
+    {   \begin{grammar}
+        [(colon){ ::=}]
+        [(semicolon){ $|$}]
+    }
+    {   \end{grammar}}
+\newenvironment{myGrammarPlus} % The same, but with a +.
+    {   \begin{grammar}
+        [(colon){ +::=}]
+        [(semicolon){ $|$}]
+    }
+    {   \end{grammar}}
+
+%%% LTL and LDL syntax
+
+\let\vphi\varphi % alternate phi, which I'll be using a lot
+\newcommand{\di}[1]{\langle#1\rangle} % 'diamond' For LDL modalities
+\newcommand{\sq}[1]{[#1]} % 'square'
+\newcommand{\luntil}{\ \mathcal{U}\ }
+\newcommand{\lalways}{\mathcal{G}}
+\newcommand{\leventually}{\mathcal{F}}
+\newcommand{\lnext}{\circ}
+\newcommand{\prog}{\Pi}
+\newcommand{\A}{\mathnormal{A}}
+\newcommand{\prop}{\mathcal{P}}
+\newcommand{\actions}{\mathcal{A}}
+\newcommand{\ltlf}{LTL$_f\ $}
+\newcommand{\ldlf}{LDL$_f\ $}
+
+\newcommand{\red}[1]{{\color{red} #1}}
+
+%%% Code listings
+\usepackage{framed}
+
+%%% Diagram drawing
+\usepackage{tikz}
+\usetikzlibrary{arrows,automata,calc,shapes, positioning}
+
+%%% Math packages
+\usepackage{amsmath}
+\usepackage{amsthm} %theorem
+\usepackage{amssymb} %symbol
+\usepackage[inference, reserved]{semantic} % for inference rules and programming keywords
+\reservestyle[\ ]{\command}{\mathbf}
+\command{if,then,else,while,do}
+
+%% For defining Lemmas and Definitions
+\newtheorem{lem}{Lemma}[section]
+\newtheorem{defn}{Definition}[section]
+\newcommand{\defnWithLabel}[2]{\begin{defn} \label{defn:#1} #2 \end{defn}}
+\newenvironment{defnL}[1]{\begin{defn} \label{defn:#1}}{\end{defn}}
+
+%%% For defining runs of automata
+\newcommand{\rundef}[3]{\begin{itemize} \item \condition{Initial} #1 \item \condition{Transition} #2 \item \condition{Accepting} #3 \end{itemize}}
+\newcommand{\condition}[1]{(#1 Condition):}
+
+%%% Some notation:
+\newcommand{\powerset}[1]{\mathcal{P}(#1)}
+\newcommand{\posbool}[1]{B^{+}(#1)} % Positive boolean formulae
+\newcommand{\negbool}[1]{B^{-}(#1)}
+\newcommand{\bool}[1]{B(#1)}
+\newcommand{\set}[1]{\{#1\}}
+\newcommand{\evalto}{\xrightarrow{eval}} % 'evaluates to'
+\newcommand{\nonempty}[1]{#1 \backslash \emptyset}
+
+\def\Xrightarrow#1#2{\xrightarrow#1{}\negthickspace^#2} % For writing transitive closures e.g. $ \Xrightarrow\tau* $
+\newcommand{\epsilonReaches}{\Xrightarrow\epsilon*} % 'reaches by 0 or more epsilon-transitions'
+
+%%% Hyperlink References
+\usepackage[colorlinks=true]{hyper ref}
+
+\title{LTL and LDL on Finite Traces: Exposition} \author{James Dai}
+%\date{}
+
+\begin{document}
+\maketitle \tableofcontents \newpage
+\section{Abstract}
+
+
+\section {Introduction}
+\begin{comment}
+The aim of this report is to discuss LTL in a relatively new setting, that of finite traces.
+I mainly follow the arguments of Vardi and de Giacomo in the paper ``Linear Temporal Logic and Linear Dynamic Logic on Finite Traces'' \cite{ldlf},
+as well as parts of their other papers in the same area.
+A wide range of ideas are woven into this setting. Planning, processes, Dynamic Logic, alternating automata.
+I also implement a satisfiability algorithm, though this is somewhat an afterthought. Or is it?? Well.
+It is a bit of a makeshift thing to be honest.
+\end{comment}
+The aim of this report is to explore, explain, and implement the concepts in the paper
+``Linear Temporal Logic and Linear Dynamic Logic on Finite Traces'' by Giuseppe De Giacomo and Moshe Y. Vardi \cite{ldlf},
+from an undergraduate's perspective.
+The paper discusses Linear Temporal Logic (LTL),
+which is usually interpreted over infinite traces, over finite traces.
+To distinguish the two, one is written LTL, and the other \ltlf.
+There are many uses of \ltlf in artificial intelligence.
+The paper shows that \ltlf is less expressive than regular expressions over finite traces,
+and introduces a logic, Linear Dynamic Logic, that is as expressive as regular expressions,
+yet as intuitive as linear temporal logic, and has the same computational properties (i.e. satisfiability is PSPACE-complete).
+I present some examples of the uses of \ltlf in planning,
+give examples of where it is not expressive enough,
+and cover the algorithm given in \cite{ldlf} to decide the satisfiability of \ldlf,
+which goes via ``alternating automata''.
+I aim to present the formalisms of \ltlf, \ldlf and AFAs and their connexions in a way
+that can be understood by an undergraduate in computer science.
+I have implemented this algorithm in Haskell. The results are...
+
+\input{./tex/ltl.tex} % section on LTL
+
+\input{./tex/ldl.tex} % section on LDL
+
+\input{./tex/afa.tex} % section on AFAs
+
+\input{./tex/imp.tex} % section on implementation
+
+\section{Conclusion and Further Directions}
+
+\begin{thebibliography}{9}
+\bibitem{ldlf}
+  de Giacomo and Vardi,
+  Linear Temporal Logic and Linear Dynamic Logic on Finite Traces (IJCAI13)
+\bibitem{ldlfsynth}
+  de Giacomo and Vardi, Synthesis for LTL and LDL on Finite Traces (IJCAI15)
+\bibitem{ldlfinsens}
+  de Giacomo, Masellis and Montali, Reasoning on LTL on Finite Traces: Insensitivity to Infiniteness
+\bibitem{decserflow}
+    W.M.P. van der Aalst and M. Pesic, DecSerFlow: Towards a Truly Declarative Service Flow Language (Web Services and Formal Methods 2006)
+
+\bibitem{kumar}
+  K.N. Kumar,
+  \href{http://www.cmi.ac.in/~kumar/words/lecture06a.pdf}{Lectures on Words (6a)}
+\bibitem{dynamic-logic}
+    D. Harel, D. Kozen, and J. Tiuryn. Dynamic Logic. MIT Press,
+    2000.
+\end{thebibliography}
+
+
+\end{document}
+
+\begin{comment}
+%%% Other sections that could be added:
+Abstract
+Code Testing
+Literature Review
+
+\end{comment}

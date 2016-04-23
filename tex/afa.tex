@@ -1,0 +1,159 @@
+
+\section {Alternating Finite Automata}
+
+The class of regular languages (of finite words) is very robust. Not only is it captured by the formalisms of deterministic and non-deterministic finite automata (DFAs and NFAs) and regular expressions (RE), but also by monadic second order logic (MSO), various combinatorial games, and another type of finite automaton, the alternating finite automaton (AFA). In this section we will discuss AFAs.
+First we recall the formal definitions of DFAs and NFAs. Actually there are many variations on the definitions. Some have sets of initial states. Some have epsilon-transitions. And AFAs can be viewed in many different ways. So it is good to specify precisely which we are talking about.
+
+\break
+
+\subsection{DFA}
+
+\begin{defnL}{dfa}
+    A DFA is a 5-tuple $(\Sigma, Q, q_0, \delta, F)$, where $\Sigma$ is a finite set of symbols, $Q$ a finite set of states, $q_0$ a state in $Q$, transition function $\delta: Q \times \Sigma \to Q$, and final states $F \subseteq Q$.
+\end{defnL}
+
+A run of a DFA $(\Sigma, Q, q_0, \delta, F)$ on a word $w=w_0...w_{n-1}$ is a sequence of states $r_0...r_n$ where
+
+\rundef{$r_0 = q_0$}
+       { $r_{i+1} = \delta(r_i, w_i)$ for $i=0...n-1$}
+       {$r_n \in F$}
+
+A DFA accepts a word $w$ iff there is an accepting run on $w$. Note that it is simple to find out if there is an accepting run, since there is only one run on any word $w$ from any particular state $q$; this is the meaning of deterministic.
+
+\subsection{NFA}
+An NFA is exactly the same as a DFA except for the transition function, which is of type \\ $\delta: Q \times \Sigma \to \powerset{Q}$, and a run accordingly differs only in the transition condition which becomes $r_{i+1} \in \delta(r_i, w_i)$ for $i=0...n-1$. Again, a word is accepted by the NFA if there is an accepting run on the word. Here there may be multiple runs for any particular word, so acceptance is not as trivial to determine as for DFAs.
+
+\noindent Note that a DFA can easily be `lifted' to an NFA thus:
+
+$\mathit{liftd2n} (\Sigma, Q, q_0, \delta, F) = (\Sigma, Q, q_0, \Delta, F)$ where $\Delta(q, a) = \{\delta(q,a)\}$.
+
+\noindent Moreover, in the other direction, an NFA can be determinised by the power set construction.
+
+Some definitions of NFAs have $\epsilon$-transitions, but these can be factored out. Consider $N_1 = (\Sigma, Q, q_0, \delta, F), \delta:  Q \times \Sigma_\epsilon \to \powerset{Q}$ where $\Sigma_\epsilon = \Sigma \cup \set{\epsilon}$. Then we define $N_2 = (\Sigma, Q' = Q \cup q_0', q_0', \delta', F')$, $\delta:  Q' \times \Sigma \to \powerset{Q'}$ thus:
+Firstly, for every state $q \in Q$ and non-$\epsilon$ symbol $a$, we want the $\delta'$ to reach all states which could be reached via $\epsilon$ transitions and one $a$-transition by $\delta$. If we define $E(S): \powerset{Q} \to \powerset{Q} =$ all states reachable from a state in $S$ by 0 or more $\epsilon$-transitions, then
+$\delta'(q,a) = E(\bigcup_{r: E({q})} \delta(r,a))$. The new start state is $q_0' = E(q_0)$, and the transition function on it is $\delta'(q_0',a) = E(\bigcup_{r: E(q_0')} \delta(r,a)) $. $q_0'$ is in $F'$ if it has a member which is also in $F$, as is any state in $Q$ $q$ such that $E(q)$ has a member in $F$.
+
+
+\subsection{AFA}
+
+
+A hint as to what an AFA is like is that an NFA can be lifted to an AFA thus:
+$\mathit{liftn2a} (\Sigma, Q, q_0, \delta, F) = (\Sigma, Q, q_0, \Delta, F)$ where $\Delta(q, a) = \bigvee_{r \in \delta(q,a)} r$.
+\noindent For example, an NFA at state $q$, reading a word $av$, where $\delta(q,a) = \set{r, s, t}$ accepts only if it accepts the rest of the word $v$ from $r$, \textit{or} from $s$, \textit{or} from $t$. That is what the $\bigvee$ is about. In an AFA, we also have $\land$ as well as $\lor$, and as well as or, for all as well as exists, e.g. an AFA at state $q$ reading a word $av$ might accept only if it accepts the rest of the word $v$ (\textit{both} from $r$ \textit{and} from $s$), \textit{or} from $t$ (in this case $\delta(q,a) = (r \land s) \lor t$).
+
+The formal definition is as follows:
+\begin{defn} \label{defn:afa}
+an AFA is the same as an NFA or DFA, except the transition function is of type $\delta: Q \times \Sigma \to \posbool{Q}$, \end{defn}
+
+
+\noindent where $\posbool{Q}$ denotes propositional formulas without negation (positive), using states in $Q$ as propositions (note that $\posbool{Q}$ also includes formulas \textit{true} and \textit{false}). The AFA is in some sense a 'negation normal form' (nnf) logical formula. This idea is elaborated on in the section on LDL, in particular the translation from LDL to AFAs, which uses nnf.
+
+We note the following property of $\posbool{Q}$, the monotonicity property:
+
+\newcommand{\assA}{\mathcal{A}}
+\newcommand{\assB}{\mathcal{B}}
+\begin{lem} \label{lem:monotonic-posbool}
+For any positive formula $F \in \posbool{Q}$, and for any assignments $\assA$ and $\assB$ such that $\assA \leq \assB$, $\assA \models F$ implies $\assB \models F$. (Contrapositively, $\assB \not\models F$ implies $\assA \not\models F$)
+\end{lem}
+\newcommand{\assC}{\mathcal{C}}
+\textbf{Proof}: By induction on structure of the formula:
+\begin{itemize}
+\item Base case ($true$ and $false$): Trivial, since all assignments satisfy $true$ and none $false$
+\item Base case (positive literal $q$): If $\assA \models q$, and $\assA \leq \assB$, then $\assB \models q$ by definition of $\leq$.
+\item Inductive case ($\lor$): consider $F \lor G$ and $\assA \models F \lor G$. Then $\assA \models F$ or $\assA \models G$. In the first case, then by the inductive hypothesis any $\assB$ such that $\assA \leq \assB$ satisfies $F$, and so satisfies $F \lor G$. Similarly for the second case.
+\item Inductive case ($\land$): consider $F \land G$ and $\assA \models F \land G$. Then $\assA \models F$ and $\assA \models G$. Then by the inductive hypothesis any $\assB$ such that $\assA \leq \assB$ satisfies $F$ and satisfies $G$, and so satisfies $F \land G$.
+\end{itemize}
+
+\begin{comment}
+We also have a dual for negative formulae:
+\begin{lem}
+For any negative formula $F \in \negbool{Q}$, and for any assignments $\assA$ and $\assB$ such that $\assA \geq \assB$, $\assA \models F$ implies $\assB \models F$. (Contrapositively, $\assB \not\models F$ implies $\assA \not\models F$)
+\end{lem}
+
+Using both, we can restore the use of $\neg$, (if we adjust our definition of positive and negative formulae) which was actually implicit in $\land$ and $\lor$.
+Suppose $\neg F$ is a negative formula, and we know $\assA \models \neg F$. Then $\assA \not\models F$, and $F$ is a positive formula. Using \ref{lem:monotonic-posbool} contrapositively, for any $\assC$ such that $\assC \leq \assA$, $\assC \not\models F$, so $\assC \models \neg F$.
+\end{comment}
+
+\subsubsection{AFA runs}
+An AFA accepts a word $w$ if there is an accepting run on the word. The definition of a run might seem a bit involved at first-- it will soon be explained in more detail.
+
+\begin{defnL}{subset-run}
+
+    A run on a word $w=w_0...w_{n-1}$ is now a sequence of subsets of $Q$,  $S_0...S_n$, rather than just a sequence of elements of $Q$. A run must satisfy the following conditions:
+    \rundef{$S_0 = \set{q_0}$.}
+           {$S_{i+1} \models \delta(q, w_i)$ for all $q \in S_i$, $i=0...n-1$ \\ The notation $S \models f$ ($S$ satisfies $f$) means: The set $S$ is interpreted as the propositional assignment of 1 to any state in $S$, and 0 to all those in $Q \backslash S$.}
+           {$S_n \subseteq F$. \\ A run is accepting if this accepting condition holds.}
+\end{defnL}
+
+A few notes: For the transition condition, it is possible that there is no set $S_{i+1}$ that satisfies every $\delta(q,w_i)$, which occurs exactly when some $\delta(q,w_i)$ is unsatisfiable (is equivalent to $false$). In that case the entire run fails there. On the other hand, if some $\delta(q,w_i) = true$, then it ``adds no burden'' to $S_{i+1}$, in that even the empty set would satisfy it-- it is as if we didn't have to consider it at all. \\ Also note that if $S_n$ is the empty set, it trivially satisfies the accepting condition, and that if for any $i$, $S_i$ is empty, then the transition condition allows all the sets following it to also be empty.
+
+To make sense of the definition of run, consider an alternative definition of accepting a word, which follows the intuition explained in comparing NFAs to AFAs, formalised by logical formulae (I read about this in \cite{kumar}): For a state $q$ and word $w$ we inductively define a formula $L(q,w)$ which evaluates to 1 ($L(q,w) \evalto 1$) iff the AFA accepts $w$ starting from $q$. The base case is $w=\epsilon$. This is simple: if there are no more symbols remaining, all we have to do to determine acceptance is check whether the state is final or not, viz. $L(q,\epsilon) = q \in F$.
+Otherwise, $w=av$, where $a \in \Sigma$. Then we take the boolean formula $f$ defined by the transition function $\delta(q, a)$, and replace the propositions/states in $f$ with the appropriate logical formula, which represents whether the AFA accepts $v$ from that state, viz. $L(q,av) = \delta(q, a)[L(r,v) / r$ for $r \in Q]$.
+
+Then we can explain an accepting run thus: it is a proof that $L(q_0,w) \evalto 1$. The proof goes backwards along the run. We want to show by induction from $i=n$ to $0$ that $L(q,w_{-i}) \evalto 1$ for all $q \in s_i$, where $w_{-i}$ is in Haskell terms $\mathit{drop}$ $i$ $w$. %, and $L'(k,w) =\begin{cases} L(k,w) & k \in Q \\ k & otherwise \end{cases}$ .
+\begin{itemize}
+\item By the accepting condition, the case $i=n$ is trivial.
+\item Supposing the IH is true for some $i=j \geq 1$, then we show it is true for $i=j-1$:
+\\ Consider an arbitrary $q \in s_{j-1}$. We want to show that $L(q,av) \evalto 1 $, where $av = w_{-(j-1)}$. By the transition condition, $s_j \models \delta(q,a)$, so any assignment $\geq s_j$ will also satisfy $\delta(q,a)$ (by lemma \ref{lem:monotonic-posbool}). Now by definition, $L(q,av) = \delta(q, a)[L(r,v) / r$ for $r \in Q]$ and $eval \circ [L(r,v) / r$ for $r \in Q]$ is just such an assignment, by the IH for $j$ ($L(r,v) \evalto 1$ for $r \in s_j$). Thus $\delta(q,a)[L(r,v) / r$ for $r \in Q] \evalto 1$ and so $L(q,av) \evalto 1$.
+
+\end{itemize}
+
+We have shown that $L(q,w_{0}) \evalto 1 $ for all $q \in s_0$. By the initial condition $s_0 = \set{q_0}$ and $w_{0} = w$, so $L(q_0,w) \evalto 1 $, as required.
+
+Note that the notion of `for all' is in the IH that $L(q,w_{-i}) \evalto 1$ \textit{for all} $q \in s_i$, while the notion of `exists' is that a word is accepted if \textit{there exists} an accepting run on the word.
+
+
+
+\subsubsection{AFA to NFA}
+
+Now we can show how to convert any AFA into an equivalent NFA, and as in the case of NFA to DFA, it is done by a subset-construction. The NFA simulates runs of the AFA, which are sequences of non-empty subsets of $Q$. The `for all' aspect is captured by these subsets and the transition function, while the `exists' aspect is part of the operation of NFAs.
+
+
+$\mathit{afa2nfa} (\Sigma, Q, q_0, \delta, F) = (\Sigma,\powerset{Q}, \set{q_0}, \Delta, \powerset{F}) $ where \\ $\Delta(s, a) = \{ s' \subseteq Q | s' \models \delta(q,a)$ for all $q \in s \}$
+
+Note that the definition of $\Delta$ is a bit inefficient since we only really need the minimal subsets of $Q$ which satisfy all the transition formulae.
+
+Interestingly a DFA formed from this NFA would then have as states sets of sets of states of the AFA, which could be thought of as DNF formulas...
+
+$\mathit{nfa2dfa} (\Sigma, Q, q_0, \delta, F) = (\Sigma,\powerset{Q}, \set{q_0}, \Delta, \set{S \subseteq Q | S \cap F \neq \emptyset}) $ where \\ $\Delta(s, a) = \bigcup_{r \in s} \delta(r,a)$
+
+\subsubsection{Other Definitions of AFA}
+
+There are quite a few other definitions of AFA. One uses trees to represent runs rather than a sequence of states. Another uses two disjoint sets of states (one 'forall' set and one 'exists' set). This leads naturally to a view of acceptance as a winning strategy in a game.
+
+For now we will just present tree-runs.
+
+\begin{defnL}{tree-run}
+    A run is a tree in which the nodes are labelled by states, satisfying the following:
+    \rundef{The root node is (labelled by) $q_0$.}
+           {The (labels of) children of a node (labelled by) $q$ at level $i$ form a set $s \models \delta(q,w_i)$.}
+           {Each branch must end either in a state which transitions to $true$ at any depth $\leq n$ or a final state at depth $n$.}
+\end{defnL}
+If we collapse all the nodes at each depth to a single set, we get the definition of run given earlier (\ref{defn:subset-run}) (Because the codomain of $\delta$ is \textit{positive} formulas, any superset of a set $s \models \delta(q,w_i)$ still satisfies $\delta(q,w_i)$). Conversely, each set in a run as sequence of subsets, which satisfies all $\delta(q,w_i)$ of the previous level $i$, can simply be duplicated to form the children of nodes $q$ in level $i$. The fact that the tree can be converted into a sequence of sets means it doesn't really matter what parent each node has to determine whether the AFA can accept the word from there. This is called the memory-less property.
+
+\subsubsection{Computational Properties}
+
+e.g. closure under language union, intersection, negation
+AFAs cover the same language class as NFAs and DFAs; hence they are closed under all the regular operations,
+as well as intersection, projection, and negation.
+However, due to their particular shape, they are more \emph{effectively} closed under union, intersection and negation,
+but projection is more involved. As for concatenation... well considering $A_1$ and $A_2$,
+with the language of $A_2$ not containing $\epsilon$ for now, then $A_1;A_2$ could be formed by...
+having a disjunction in the transition from each final state of $A_1$ to the start state of $A_2$,
+and considering the final states of $A_2$ as that of the whole.
+If $L(A_2)$ did contain $\epsilon$, then we would simply include as final states those of $A_1$ as well.
+In fact this construction should work directly for NFAs without $\epsilon$-transitions since it just uses disjunction.
+Union and intersection are implemented by the $\land$ and $\lor$ operators,
+while negation is implemented by 1. switching occurrences of $\land$ and $\lor$
+(and true and false) in transition functions, and
+2. flipping the final states ($F' = Q \setminus{F}$)
+For this reason, one can see that the shape of AFAs is like a negation-normal form formula.
+(This is exactly what one does to negate a negation-normal form formula)
+
+\subsection{Translation from LDL into AFAs}
+
+The translation from LDL to AFAs given in \cite{ldlf} is as follows:
+
+...
+
+Note the key features of negation normal form, duality, etc.

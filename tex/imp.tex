@@ -1,0 +1,72 @@
+
+\section {Implementation of Satisfiability Algorithm}
+\subsection{Description}
+
+As an approximation to the problem I tried writing a Haskell program to decide satisfiability for LTL.
+
+I wrote a haskell program to try to answer the satisfiability question for LTL.
+I did this by translating LTL formulae into equivalent deterministic finite automata, using basic automata and combinators, and testing for emptiness. For example, I translated $\phi$ Until $\psi$ as:
+\begin{code}
+> ltl2aut (Until f1 f2) = (dStar $ ltl2aut f1) `dConc` ltl2aut f2
+\end{code}
+i.e. $ ltl2aut(\phi)^* \cdot ltl2aut(\psi) $.
+But this was an error (I copied the translation of LTL to LDL in \cite{ldlf} which incorrectly translated $ f(\phi \, \mathcal{U} \, \psi) $ to $\langle f(\phi)^* \rangle f(\psi)$).
+The correct translation of $ f(\phi \, \mathcal{U} \, \psi) $ into LDL is $\langle (f(\phi)?true)^* \rangle f(\psi)$. It doesn't seem simple to translate this directly to a DFA. So it makes sense to translate it (through LDL) to an AFA, as shown in \cite{ldlf}.
+
+\begin{comment}
+Note: the code has since been reformulated and can be found on my
+\href{https://github.com/passionfruit18/ldl_exposition}{github}.
+\end{comment}
+
+A few problems came up in the coding. The first was suitable representation of logics and automata. In my first attempts the data types were not general enough to cope with multiple logics and automata.
+
+Particularly with doubly recursive types like LDLogic.
+
+To solve this I made use of Haskell's parameterised data types, type synonyms and newtypes.
+
+I decided it was not necessary to go all the way down to deterministic automata from alternating automata.
+
+The second was the size of the automata. The subset construction of an AFA produces an NFA with exponentially many states.
+
+To solve this I only constructed reachable states.
+
+There will be cases for which reachability does not prune many states.
+
+In particular, formulae such as.....
+
+
+I think there were some cases where Haskell got in the way, such as...
+Hard to define "ShowSet" for arbitrarily nested sets.
+Can't easily make predefined types into instances of stuff. Need to do this newtype thing. Not extensible like Ruby. Would have to edit original source code of predefined type.
+
+Thus, all the pretty-printing is ad-hoc.
+
+Here is an example of my program... the stages of data structures passed through on the way to satisfiability.
+
+do I need to construct this by hand?
+
+Formula:
+\\AFA
+\\NFA
+\\Empty?
+
+\subsection{Evaluation and Comparison to existing tools}
+
+Systems for managing automata, logic and games have been in development for quite some time, notably GOAL (and ...?).
+
+I tried GOAL and here's how it compares with my system...
+
+I would not expect my implementation to be as refined as such systems.
+
+\subsection{Code listings}
+
+First attempt
+
+
+data structures
+
+
+Second attempt
+
+
+data structures
