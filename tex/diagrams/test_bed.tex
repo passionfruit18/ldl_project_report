@@ -1,0 +1,37 @@
+\documentclass[11pt, oneside]{article}
+\usepackage{geometry}
+\geometry{letterpaper}
+
+%%% Diagram drawing
+\usepackage{tikz}
+\usetikzlibrary{arrows,automata,calc,shapes, positioning}
+
+%% math
+\newcommand{\set}[1]{\{#1\}}
+
+%% LTLf/LDLf
+\let\vphi\varphi % alternate phi, which I'll be using a lot
+\newcommand{\di}[1]{\langle#1\rangle} % 'diamond' For LDL modalities
+\newcommand{\sq}[1]{[#1]} % 'square'
+\newcommand{\luntil}{\ \mathcal{U}\ }
+\newcommand{\lalways}{\mathcal{G}}
+\newcommand{\leventually}{\mathcal{F}}
+\newcommand{\lnext}{\circ\,}
+\newcommand{\prog}{\Pi}
+\newcommand{\A}{\mathnormal{A}}
+\newcommand{\prop}{\mathcal{P}}
+\newcommand{\actions}{\mathcal{A}}
+\newcommand{\fin}[1]{#1$_f$}
+\newcommand{\ltlf}{LTL$_f\ $}
+\newcommand{\ldlf}{LDL$_f\ $}
+
+\begin{document}
+
+\newcommand{\ldlfa}{LDL$_f$}
+\newcommand{\ldlfb}{LDL$_f\,$}
+\ldlf. \ldlf blah.
+\\\ldlfa. \ldlfa blah.
+\\\ldlfb. \ldlfb blah.
+\input{./trace1.tex}
+
+\end{document}

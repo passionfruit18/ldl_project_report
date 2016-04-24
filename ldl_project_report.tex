@@ -88,13 +88,14 @@
 \newcommand{\luntil}{\ \mathcal{U}\ }
 \newcommand{\lalways}{\mathcal{G}}
 \newcommand{\leventually}{\mathcal{F}}
-\newcommand{\lnext}{\circ}
+\newcommand{\lnext}{\circ\,}
 \newcommand{\prog}{\Pi}
 \newcommand{\A}{\mathnormal{A}}
 \newcommand{\prop}{\mathcal{P}}
 \newcommand{\actions}{\mathcal{A}}
-\newcommand{\ltlf}{LTL$_f\ $}
-\newcommand{\ldlf}{LDL$_f\ $}
+\newcommand{\fin}[1]{#1$_f$}
+\newcommand{\ltlf}{LTL$_f\,$}
+\newcommand{\ldlf}{LDL$_f\,$}
 
 \newcommand{\red}[1]{{\color{red} #1}}
 
@@ -144,20 +145,23 @@
 \begin{document}
 \maketitle \tableofcontents \newpage
 \section{Abstract}
-
-
+\begin{center}
+  \red{\emph{In which I reverse-engineer a rather tersely-written paper}}
+\end{center}
 \section {Introduction}
 \begin{comment}
-The aim of this report is to discuss LTL in a relatively new setting, that of finite traces.
 I mainly follow the arguments of Vardi and de Giacomo in the paper ``Linear Temporal Logic and Linear Dynamic Logic on Finite Traces'' \cite{ldlf},
 as well as parts of their other papers in the same area.
 A wide range of ideas are woven into this setting. Planning, processes, Dynamic Logic, alternating automata.
 I also implement a satisfiability algorithm, though this is somewhat an afterthought. Or is it?? Well.
 It is a bit of a makeshift thing to be honest.
 \end{comment}
-The aim of this report is to explore, explain, and implement the concepts in the paper
+\red{1. The aim of this report} is to explore, explain, and implement the concepts in the paper
 ``Linear Temporal Logic and Linear Dynamic Logic on Finite Traces'' by Giuseppe De Giacomo and Moshe Y. Vardi \cite{ldlf},
 from an undergraduate's perspective.
+\red{2. I aim to present the formalisms} of \ltlf, \ldlf and AFAs and their connexions in a way
+that can be understood by an undergraduate in computer science.
+\red{3. The aim of this report is} to discuss LTL in a relatively new setting, that of finite traces.
 The paper discusses Linear Temporal Logic (LTL),
 which is usually interpreted over infinite traces, over finite traces.
 To distinguish the two, one is written LTL, and the other \ltlf.
@@ -168,10 +172,8 @@ yet as intuitive as linear temporal logic, and has the same computational proper
 I present some examples of the uses of \ltlf in planning,
 give examples of where it is not expressive enough,
 and cover the algorithm given in \cite{ldlf} to decide the satisfiability of \ldlf,
-which goes via ``alternating automata''.
-I aim to present the formalisms of \ltlf, \ldlf and AFAs and their connexions in a way
-that can be understood by an undergraduate in computer science.
-I have implemented this algorithm in Haskell. The results are...
+which goes via ``alternating automata''. I have implemented this algorithm in Haskell.
+
 
 \input{./tex/ltl.tex} % section on LTL
 
@@ -193,6 +195,9 @@ I have implemented this algorithm in Haskell. The results are...
   de Giacomo, Masellis and Montali, Reasoning on LTL on Finite Traces: Insensitivity to Infiniteness
 \bibitem{decserflow}
     W.M.P. van der Aalst and M. Pesic, DecSerFlow: Towards a Truly Declarative Service Flow Language (Web Services and Formal Methods 2006)
+\bibitem{nonelem_starfree}
+    L. J. Stockmeyer and A. Meyer,
+    Cosmological lower bound on the circuit complexity of a small problem in logic
 
 \bibitem{kumar}
   K.N. Kumar,

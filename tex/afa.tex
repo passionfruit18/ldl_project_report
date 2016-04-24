@@ -1,8 +1,18 @@
 
 \section {Alternating Finite Automata}
 
-The class of regular languages (of finite words) is very robust. Not only is it captured by the formalisms of deterministic and non-deterministic finite automata (DFAs and NFAs) and regular expressions (RE), but also by monadic second order logic (MSO), various combinatorial games, and another type of finite automaton, the alternating finite automaton (AFA). In this section we will discuss AFAs.
-First we recall the formal definitions of DFAs and NFAs. Actually there are many variations on the definitions. Some have sets of initial states. Some have epsilon-transitions. And AFAs can be viewed in many different ways. So it is good to specify precisely which we are talking about.
+The class of regular languages (of finite words) is very robust.
+Not only is it captured by the formalisms of deterministic and non-deterministic
+finite automata (DFAs and NFAs) and regular expressions (RE),
+but also by monadic second order logic (MSO),
+various combinatorial games, and another type of finite automaton,
+the alternating finite automaton (AFA).
+In this section we will discuss AFAs.
+First we recall the formal definitions of DFAs and NFAs.
+Actually there are many variations on the definitions.
+Some have sets of initial states. Some have epsilon-transitions.=
+And AFAs can be viewed in many different ways.
+So it is good to specify precisely which we are talking about.
 
 \break
 
@@ -152,8 +162,28 @@ For this reason, one can see that the shape of AFAs is like a negation-normal fo
 
 \subsection{Translation from LDL into AFAs}
 
+\red{STUB}
 The translation from LDL to AFAs given in \cite{ldlf} is as follows:
 
 ...
+firstly LDL must be put into negation normal form.
+This can be done in linear time.
 
-Note the key features of negation normal form, duality, etc.
+\par Programs:
+\begin{myGrammar}
+$\prog$: $\prog_0$; $\vphi?$; $\prog$ + $\prog$; $\prog$ \semi $\prog$; $\prog^*$
+\end{myGrammar}
+\par Formulae:
+\begin{myGrammar}
+$\vphi$: $\A$; $\neg\A$;  $\vphi \lor \vphi$; $\vphi \land \vphi$; $\di{\prog}\vphi$;  $\sq{\prog}\vphi$
+\end{myGrammar}
+
+The states of the automaton corresponding to $\vphi$ will be the
+Fischer-Ladner closure $CL_\vphi$, a generalisation of subformula closure...
+\red{Type out definition of Fischer-Ladner..}
+The automaton produced will have no final states; acceptance is by
+transition to ``true'' ($\delta(\vphi,\Pi)=true$).
+The transition function is recursively defined over the structure of states
+(which are formulae).
+Due to the formulae being in nnf, there is some ``repetitiveness'' due to duality
+in the definition.

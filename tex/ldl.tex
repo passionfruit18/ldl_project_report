@@ -6,15 +6,15 @@ Important commands: (math mode)
 \di{x} writes x in diamond brackets
 \sq{x} '' in square brackets
 \prog  symbol for program, currently PI
-\vphi  alternate phi symbol (curly)
+\vphi  alternate phi symbol (curly) (\phi is the straight one)
 \model symbol for a PDL/modal logic model
 \neg   logical negation symbol
 \end{comment}
 
 \section {Linear Dynamic Logic}
 
-Linear Dynamic Logic (LDL) is exactly Propositional Dynamic Logic (PDL)\cite{dynamic-logic} in syntax. However, its semantics or models are based on finite traces, like LTL. Thus to explain it we will take a detour through PDL.
-
+Linear Dynamic Logic (\ldlf) is exactly Propositional Dynamic Logic (PDL)\cite{dynamic-logic} in syntax. However, its semantics or models are based on finite traces, like LTL. Thus to explain it we will take a detour through PDL.
+\red{a dynamic logic is used by NASA(?) for airplane control.?? I heard this somewhere but can't seem to find reference}
 
 \subsection{Propositional Dynamic Logic}
 
@@ -29,7 +29,12 @@ Now what is the sense of ``program'' here? There are no assignable variables as 
 In functional programming, programs are thought of as functions; this more general view allows for nondeterminism and partial functions.
 \end{comment}
 
-So, one of the things a \emph{model} $\model$ for PDL with \textit{atomic programs in the set $\prog_0$} must specify is a set of states $W$, and binary relations over the states that \textit{interpret} the atomic programs.
+So, one of the things a \emph{model} $\model$ for PDL with
+\textit{atomic programs in the set $\prog_0$} must specify
+is a set of states $W$
+(states are also called worlds (in a general modal sense of ``possible worlds'' or ``world at time i''),
+as models can be represented by graphs, we call states nodes as well),
+and binary relations over the states that \textit{interpret} the atomic programs.
 
 For example, with $\prog_0 = \set{x, y, z}$, we might have a model $\model$ with  $W = \set{1,2,3}$, and $x_{\model} = \set{(1,3)}, y_{\model} = \set{(3,2)}, z_{\model} = \set{(1,2),(2,3),(1,3)}$.
 
@@ -43,6 +48,7 @@ For example, with $\prog_0 = \set{x, y, z}$, we might have a model $\model$ with
     (q2.335) edge node {z} (q3.115)
     (q3) edge node {y} (q2);
 \end{tikzpicture}
+\label{pdl_model_diagram}
 
 Thus, executing program x at state 1, we know we will end up at state 3. Executing z at state 1, we may end up in state 2 or state 3. Just having atomic programs is a bit restrictive though-- we know we can get from 1 to 3 with one application of $x$, and 3 to 2 with $y$, but what if we can use $x$ \emph{or} $y$ in one step, or $x$ then $y$? Or, where can we get to by repeated applications of $z$? What we want is to be able to form the \emph{union}, \emph{composition}, and \emph{reflexive transitive closure}, respectively, of those relations. These correspond syntactically to the regular expression operators of \emph{addition} ($+$), \emph{concatenation} ($;$), and \emph{star} ($*$). Thus part of the syntactic definition for programs is:
 
@@ -77,10 +83,15 @@ $\<if>\ \vphi \<then>\ x \<else>\ y$, which is $(\vphi?x)+(\neg\vphi?y)$ (omitti
 
 $\<while>\ \vphi \<do>\ x$, which is $(\vphi?x)^*;\neg\vphi?$ (remembering that a while loop terminates only when $\neg\vphi$ holds).
 
-Additionally, we can express the Hoare triple $\set{\vphi} x \set{\psi}$ as $\vphi \to \sq{x} \psi$. (If $\vphi$ holds, then after all executions of $x$, $\psi$ holds. Note that this version does not enforce termination, since $\sq{x}\vphi$ holds at any state that reaches nowhere via $x$.)
+Additionally, we can express the Hoare triple $\set{\vphi} x \set{\psi}$ as
+$\vphi \to \sq{x} \psi$. (If $\vphi$ holds, then after all executions of $x$, $\psi$ holds. Note that this version does not enforce termination,
+since $\sq{x}\vphi$ would hold at a (in fact any) state
+that reaches no other state (even itself) via $x$. A stronger version would conjoin
+$\vphi \to \di{x} \psi$.)
 
 \subsubsection{Listing of syntax and semantics}
 Here we list all the syntax and semantics of PDL for convenience.
+\break
 \begin{framed}
 \par \textbf{Syntax:}
 \par Programs:
@@ -92,7 +103,9 @@ $\prog$: $\prog_0$; $\vphi?$; $\prog$ + $\prog$; $\prog$ \semi $\prog$; $\prog^*
 $\vphi$: $\A$; $\neg \vphi$; $\vphi \lor \vphi$; $\di{\prog}\vphi$
 \end{myGrammar}
 \par \textbf{Semantics:}
-\par Models: $\model = (W,\set{x_\model}_{x \in \prog_0}, V)$ where $W$ is a set of states, $x_\model$ are the interpretations of each atomic program, and $V(A)(w)$ is true iff proposition $A$ holds at state $w$.
+\par Models: $\model = (W,\set{x_\model}_{x \in \prog_0}, V)$
+where $W$ is a set of states (worlds),
+$x_\model$ are the interpretations of each atomic program, and $V(A)(w)$ is true iff proposition $A$ holds at state $w$.
 
 Interpretation of programs:
 \begin{itemize}
@@ -124,15 +137,27 @@ $\quad$ \inference[concat]{u\ x_\model\ v & v\ y_\model\ w}
 \item $\model,w \models \di{x}\vphi$ iff there exists $v$ such that $ w\ R_\model(x)\ v$ and $\model, v \models \vphi$
 \end{itemize}
 \end{framed}
-\subsection{LDL in terms of PDL}
+\subsection{\ldlf in terms of PDL}
 
-We may now understand LDL in terms of PDL.
-In the paper \cite{ldlf}, programs ($\prog$) are referred to as regular expressions ($\rho$). The atomic programs, written $\phi$ (not to be confused with $\vphi$), are propositional formulae over $\prop$ ($\bool{\prop}$) (a formula $\phi$ would represent the set of $\prop$-assignments which satisfy it, so $\bool{\prop}$ is finite up to this notion). We mentioned earlier that LDL models are a subset of PDL models.
+We may now understand \ldlf in terms of PDL.
+In the paper \cite{ldlf}, regular expressions ($\rho$) take the place of
+programs ($\prog$)
+(and then these regular expressions are used to encode
+``procedural execution constraints'' in planning,
+which are again ``programs''
+(this time based on atomic planning actions)...
+there and back again, as it were).
+The atomic programs,
+written $\phi$ (not to be confused with $\vphi$),
+are propositional formulae over $\prop$ ($\bool{\prop}$)
+(a formula $\phi$ would represent the set of $\prop$-assignments which satisfy it,
+so $\bool{\prop}$ is finite up to this notion).
+We mentioned earlier that \ldlf models are a subset of PDL models.
 
 Formally,
 
 \begin{defnL}{ldl-model}
-An LDL model is a finite trace $\pi=\pi[0]...\pi[last]$ of length $n$, where $last = n-1$, and each $\pi[i]$ is (labelled with) a propositional assignment over $\prop$ (alternatively, is a member of $2^\prop$).
+An \ldlf model is a finite trace $\pi=\pi[0]...\pi[last]$ of length $n$, where $last = n-1$, and each $\pi[i]$ is (labelled with) a propositional assignment over $\prop$ (alternatively, is a member of $2^\prop$).
 \end{defnL}
 
 As a PDL model, it would be $\model = (W, \set{\phi_\model}_{\bool{\prop}}, V)$ where
@@ -142,14 +167,112 @@ As a PDL model, it would be $\model = (W, \set{\phi_\model}_{\bool{\prop}}, V)$ 
 \item $V(A)(\pi[i])$ iff $\pi[i](A)$.
 \end{itemize}
 
-If we had a ``next'' relation $next=\set{(i,i+1)\ |\ 0 \leq i \leq (last - 1)}$, we could think of $\phi_\model$ as $(\phi?next)_\model$ (considering $\phi$ as a formula $\vphi$ rather than a regular expression $\rho$). As it is, we can define the LTL operator $\circ$, which is interpreted as $next$, by $\circ:=\di{true}$.
+In any case, these are the same models as for \ltlf. The definition
+has been carefully setup so that any \ltlf formula
+can be translated straightforwardly into \ldlf. The key parts are the modalities
+$\lnext$ and $\luntil$:
+\ldlf $\vphi_1 \luntil \vphi_2$ is translated into \ldlf
+$\di{(\vphi_1?;true)^*}\vphi_2$, and
+$\lnext\phi$ into $\di{true}\phi$.
 
-\subsection{Examples of LDL formulae and models}
+
+\subsection{Examples of \ldlf formulae and models}
 
 \begin{itemize}
     \item $\di{(\vphi_1?;true)^*}\vphi_2$ is the equivalent of the LTL formula $\vphi_1 \luntil \vphi_2$.
-    \item $\sq{c}\sq{a+b}true$ would be satisfied by (among others) any model starting with $\pi[0]$ a set \emph{not} containing $c$. The point $\pi[0]$ would in this case not have any outgoing $c$-edges, and hence the condition `` for all points $\pi[i]$ reachable by a $c$-edge, $\pi[i] \models \sq{a+b}true$ '' (which is the condition for $\sq{c}\sq{a+b}true$ to be satisfied at $\pi[0]$) is satisfied vacuously.
+    \item $\sq{c}\sq{a+b}true$ would be satisfied by (among others) any model starting with
+    $\pi[0]$ a set \emph{not} containing $c$.
+    The point $\pi[0]$ would in this case not have any outgoing
+    $c$-edges, and hence the condition
+    `` for all points $\pi[i]$ reachable by a $c$-edge,
+    $\pi[i] \models \sq{a+b}true$ ''
+    (which is the condition for $\sq{c}\sq{a+b}true$ to be
+    satisfied at $\pi[0]$) would be satisfied vacuously.
 
 \end{itemize}
 
-In the next section we will describe alternating finite automata, which are generalisations of nondeterministic finite automata that are convenient to use to decide the satisfiability problem for LDL on finite traces.
+In the next section we will describe alternating finite automata, which are generalisations of nondeterministic finite automata that are convenient to use to decide the satisfiability problem for \ldlf on finite traces.
+
+\subsection{\ldlf expressivity}
+
+\ldlf was born from the desire to use regular expressions yet also have operations
+of conjunction and negation-- to have a language as expressive as regular expressions,
+but ``higher level'' than plain regular expressions-- to have a cake and eat it too.
+
+Regular expressions, considered as trace-acceptors, have syntax
+
+\begin{myGrammar}
+$\rho$: $\phi$; $\rho$ + $\rho$; $\rho$ \semi $\rho$; $\rho^*$
+\end{myGrammar}
+
+where $\phi$ is syntactic sugar for
+``the sum of all assignments which satisfy $\vphi$.''
+(remembering that traces are sequences of precisely
+such assignments, hence the question of whether $\rho \models \pi$
+is a matter of matching up assignments at the base case.)
+
+Leading up to the grand result that ``\ldlf is as expressive as \fin{RE}'',
+it is claimed in \cite{ldlf} ``Theorem 10'' that
+\emph{``\fin{RE} can be translated into \ldlf in linear time.''}
+Yet, in the same paper, it was also stated (referring to \cite{nonelem_starfree})
+that the ``nonemptiness problem'' (which is satisfiability) for star-free regular expressions is nonelementary.
+(Star-free regular expressions have the syntax of \fin{RE} without star, and with
+complementation. See below.)
+
+Star-free regular expression syntax:
+\begin{myGrammar}
+$\rho$: $\phi$; $\rho$ + $\rho$; $\rho$ \semi $\rho$; $\overline{\rho}$
+\end{myGrammar}
+
+But if \fin{RE} can be translated so easily into \ldlf, then star-free regular expressions
+certainly can as well (since negation is easy in \ldlf).
+But an elementary satisfiability algorithm (for \ldlf and thus star-free)
+can be obtained by going via the translation into alternating automata
+(which will be covered below).
+This is a contradiction.
+
+Indeed, it does not seem so trivial to translate \fin{RE} into \ldlf.
+Consider a simple example; for some proposition $a \in \prop$, we have the regular expression
+$aa$ which satisfies the trace $\set{a}\set{a}$; whereas the \ldlf formula
+satisfying the same would be $\di{a}a$.
+That is, because the regular expression part of any
+\ldlf formula is tucked into the \emph{modality}, the original full
+expression must be split up awkwardly.
+We could consider an correspondence over extended traces. Then we would want
+something like
+\begin{center}
+    $aa \models \set{a}\set{a}$ iff $\di{aa}true \models \set{a}\set{a}\set{}$,
+\end{center}
+or more generally
+\begin{center}
+  $\rho \models \pi$ iff $\di{\rho}true \models \pi\set{}$
+\end{center}
+where $\pi\set{}$ is just the
+extension of $\pi$ with an extra point with the empty assignment.
+The forward direction certainly holds for any trace.
+But the backwards direction may not hold for non-satisfying traces when
+the expression involves star. For example:
+\begin{center}
+  $\di{ab^*c}true \models \set{a}\set{b}\set{c}\set{c}\set{}$
+\end{center}
+since $true \models \set{c}\set{}$ ($true$ ``short-circuits'' the evaluation)
+whereas
+\begin{center}
+  $ab^*c \not\models \set{a}\set{b}\set{c}\set{c}$,
+\end{center}
+since the regular expression must match the whole trace.
+
+All this is rather awkward to deal with. I'll end by saying that
+since I believe in the elementarity of the translation to alternating automata,
+I can only conclude that any algorithm that
+translates from \fin{RE} to \ldlf is worst-case non-elementary.
+I do still believe (naively)
+that \ldlf is as expressive as \fin{RE}, though, since
+\ldlf formulae include regular expressions.
+
+If a regular expression $\rho$ could be factored to the form $\rho_1;\rho_2$, where
+$\rho_2$ contained no concatenation or star
+(i.e. only addition, complementation, and base formulae $\phi$),
+then it would be easy from there to
+give the equivalent \ldlf formula as $\di{\rho_1}tr(\rho_2)$ where tr translates
+$+$ into $\lor$ and $\overline{\rho}$ to $\neg{tr(\rho)}$.

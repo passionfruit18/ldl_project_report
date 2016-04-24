@@ -1,0 +1,18 @@
+
+{\newcommand{\lab}{$\lnext$}
+\begin{figure}
+  \begin{tikzpicture}[shorten >=1pt,node distance=3cm,on grid,auto]
+     \node[state] (q1)   {$\pi[0]: \set{a}$};
+     \node[state] (q2) [right=of q1] {$\pi[1]: \set{a,b}$};
+     \node[state] (q3) [right=of q2] {$\pi[2]: \set{}$};
+     \node[state, draw=none] (q4) [right=of q3] {...};
+     \node[state] (q5) [right=of q4] {$\pi[last]: \set{c}$};
+      \path[->]
+      (q1) edge node {\lab} (q2)
+      (q2) edge node {\lab} (q3)
+      (q3) edge node {\lab} (q4)
+      (q4) edge node {\lab} (q5);
+  \end{tikzpicture}
+\caption{Diagram of a finite trace\label{fig:fin_trace_diagram}}
+\end{figure}
+}

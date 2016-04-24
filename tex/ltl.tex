@@ -6,28 +6,74 @@ Historically LTL has been used in the infinite setting,
 In the infinite setting LTL is concerned with concurrent processes which run indefinitely. By constraints on 'traces' of the observable/recorded behaviours of systems of these interacting processes, it can ensure/verify properties such as:
 
 Safety:
-Mutual exclusion (so that two processes don't try to access a resource e.g. a printer at the same time).
-$\lalways(p_1 \to \neg p_2 \luntil \neg p_1)$ says one direction of mutual exclusion, viz. while $p_1$ is using the printer
-$p_2$ may not.
+Mutual exclusion (two processes don't access a resource
+(e.g. a printer) at the same time).
+\begin{center}
+  $\lalways(using_1 \to \neg using_2 \luntil \neg using_1)$
+\end{center}
+says one direction of mutual exclusion,
+viz. while one process is using the printer ($using_1$ is true)
+the other may not ($using_2$ is false).
 
 Fairness:
-After making a request (to use a printer) it is always fulfilled (eventually) and not blocked up by another user indefinitely.
+After making a request (to use a printer) it is always fulfilled (eventually)
+and not blocked up by another user indefinitely.
+\begin{center}
+  $\lalways(req_1 \to \leventually using_1)$
+
 
 Liveness:
 The most basic liveness is, ``X happens''. So, $\leventually a$ says proposition $a$ will hold eventually.
 Or, infinitely often: $\lalways \leventually a$. (modalities associate to the right.)
 \subsection{Syntax and semantics}
 \red{STUB}
-The syntax of LTL is propositional logic over a given set of propositions $\prop$ with modalities ``next'' and ``until'': $\lnext \phi$ and $\phi \luntil \psi$.
-The (syntactic) abbreviations  $\leventually \phi := true \luntil \phi$ and $\lalways \phi := \neg \leventually \neg \phi$, which have an ``obvious'' semantics of ``eventually'' (or ``future'') and ``always'' (or ``globally'').
-An infinite model for LTL is an infinite sequence $\pi$ (also called a trace) of propositional models
-A sequence. A formula $\phi$ is satisfied by trace $\pi$ if it is satisfied from the beginning of the trace, that is, we say $\pi, 0 \models \phi$. (Note this is not the same as the propositional world $\pi[0]$ satisfying $\phi$!)
-... basic propositional stuff... $\pi, i \models \lnext\phi$ iff $\pi, (i+1) \models\phi$... $\pi, i \models \phi\luntil\psi$ iff either $\pi, i \models \psi$ or ($\pi, i \models \phi$ and $\pi, (i+1) \models \phi\luntil\psi$.
-The finite semantics is z. Finite sequence. What happens at the edge. Stuff mentioned in paper. Certain formulae equivalent. $\lalways \leventually \phi$ and $\leventually \lalways \phi.$
-They differ in aspects w.
-\red{would be nice to have a diagram of a trace}
+The syntax of LTL is propositional logic
+(i.e. formulae can be in the base case propositions $a$,
+joined by connectives $\lor$ and $\neg$),
+over a given set of propositions
+$\prop$ (e.g. $\set{a,b,c}$) with modalities ``next'' and ``until'', written
+$\lnext \vphi$ and $\vphi \luntil \psi$.
+\\The syntactic abbreviations
+$\leventually \vphi := true \luntil \vphi$ and
+$\lalways \vphi := \neg \leventually \neg \vphi$,
+have a semantics of ``eventually'' (or ``Future'')
+and ``always'' (or ``Globally'').
+\\A (infinite) model for LTL is an infinite sequence
+$\pi$ (also called a trace) of propositional models (represented as sets) (see figure \ref{fig:inf_trace_diagram}).
+\input{./tex/diagrams/trace1.tex}
 
-\subsection{How the finite setting differs: planning and service process modelling}
+\\A formula $\vphi$ is satisfied by trace $\pi$ if it is satisfied
+from the beginning of the trace, that is,
+we say $\pi \models \vphi$ iff $\pi, 0 \models \vphi$.
+(Note this is not the same as the
+propositional world $\pi[0]$ satisfying $\vphi$!)
+We have the modal conditions
+\\
+\begin{itemize}
+\item$\pi, i \models \lnext\vphi$ iff $\pi, (i+1) \models\vphi$
+\item $\pi, i \models \vphi\luntil\psi$ iff
+either $\pi, i \models \psi$ or
+($\pi, i \models \vphi$ and $\pi, (i+1) \models \vphi\luntil\psi$).
+\end{itemize}
+Equivalently, we can say $\vphi\luntil\psi \equiv
+\psi \lor (\vphi \land \vphi\luntil\psi)$.
+Or, giving a non-recursive definition,
+$\pi, i \models \vphi \luntil \psi$ iff
+$(\exists j \geq i)
+(\pi,j \models \psi \land
+(\forall i \leq k < j) (\pi, k \models \vphi))$
+
+Otherwise, $\lor$ and $\neg$ behave as expected, and propositions $a \in \prop$ are evaluated
+$\pi,i \models a$ iff $\pi[i] \models a$.
+\\Models for \ltlf are finite sequences $\pi[0]..\pi[last]$ (see figure \ref{fig:fin_trace_diagram}).
+What happens at the edge.
+Note that for no $\vphi$ does $\pi[last] \models \lnext\vphi$.
+\red{Stuff mentioned in paper.}
+Certain formulae equivalent. $\lalways \leventually \vphi$ and
+$\leventually \lalways \vphi$ are satisfied by and only by $\pi$ such that $\pi, last \models \vphi$.
+\input{./tex/diagrams/trace2.tex}
+
+\subsection{Applications in the finite setting: planning and service process modelling}
 \red{STUB}
 
 Having considered in abstractum the differences of finite and infinite setting, we shall briefly discuss some applications of \ltlf.
@@ -55,8 +101,6 @@ and 2. the action proposition at a state $\pi[i]$
 and the other propositions from $\prop$ at $\pi[i-1]$ and $\pi[i]$ must
 ``behave properly'' according to the planning problem definition (that stipulate the conditions, encoded as $\prop$, which must hold before and after an action is taken).
 
-\subsection{examples of use}
-
 More on some notions which arise naturally in the settings mentioned above,
 and their representation in their respective formalisms and thus in LTL.
 
@@ -80,10 +124,29 @@ Many common patterns captured by \ltlf are such formulae.
 e.g.
 
 \subsection{variations on goals}
+\red{STUB}
 \ltlf can also capture temporal constraints while trying to reach the goal.
 It can also capture temporally extended goals.
+For example, ``do not disturb'' or ``restore'' patterns are like safety patterns:
+They say ``while pursuing this goal, maintain some integrity''. e.g. don't harm people.
+Or ``clean your dishes after you use them'' (returning things to a previous clean state).
+Or ``if you do hurt someone, apologize''...
 
-\subsection{limitations}
+\subsection{???}
+\red{STUB}
+logics can be used in a variety of ways. As we have been saying,
+they can encode planning problems, and
+we can decide whether a plan solves a problem, \emph{a posteriori}, that is,
+with the plan already having been made.
+Or, they can be used to \emph{monitor} an \emph{ongoing} (business) process, saying
+what conditions need to hold (be restored) for the process to finish, and also
+giving some indication of what actions should \emph{not} be taken.
+We could think of this being implemented by a translation to an automaton \emph{on the fly},
+so that not all states have to be generated at once.
+Or again, similarly, if we have a particular plan we want to evaluate, we don't have to
+realize the whole automaton, but simply the part relevant to the plan actions.
+
+\subsection{(Expressive) Limitations of \ltlf}
 Procedural execution constraints cannot be expressed in \ltlf.
 \cite{ldlfsynth} (i.e. programs)
 
@@ -100,19 +163,16 @@ what would happen if a more direct representation of actions was allowed...
 Well, one would want to keep linearity of the atomic actions,
 and then the only question is whether the thing still compiles nicely into AFAs?
 
-\subsection{Expressivity, complexity and the need for another formalism}
+\red{So, anyways, we need a new formalism. Hence \ldlf.}
 
-Unfortunately, LTL is not as expressive as one would like (on finite traces). For example, it cannot express capture regular properties such as a model being of even length, or..
+\ldlf has the same complexity for satisfiability etc., but is more expressive. It can handle those things mentioned above. (Is the same true on infinite?)
 
-These would be required for ?? `soft constraints'
-examples being...
+\ltlf is not as expressive as \fin{RE}.
+\ltlf is as expressive as FO and star-free \fin{RE}.
 
-LDL has the same complexity for satisfiability etc., but is more expressive. It can handle those things mentioned above. (Is the same true on infinite?)
-
-LTL is not as expressive as REf.
-LTL is as expressive as FO and star-free REf.
-We would like REf's expressivity.
-We can't use REf directly (nonelementary nonemptiness of star-free REf $\Rightarrow$ nonelementary complementation).
-Thus we use LDL which can be easily complemented and intersected.
-LDL can be translated into REf elementarily.
-Note this means REf can't be translated into REf elementarily otherwise we'd have elementary complementation for REf.
+We would like \fin{RE}'s expressivity.
+We can't use \fin{RE} directly (nonelementary nonemptiness of star-free \fin{RE} $\Rightarrow$ nonelementary complementation).
+Thus we use \ldlf which can be easily complemented and intersected.
+\ldlf can be translated into \fin{RE} elementarily.
+Note this means \fin{RE} can't be translated into \fin{RE} elementarily otherwise we'd have elementary complementation for REf.
+(Discussed more in the section on \ldlf)
