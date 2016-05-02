@@ -27,5 +27,5 @@
 \contentsline {section}{\numberline {6}Implementation of Satisfiability Algorithm}{19}{section.6}
 \contentsline {subsection}{\numberline {6.1}Description}{19}{subsection.6.1}
 \contentsline {subsection}{\numberline {6.2}Evaluation and Comparison to existing tools}{20}{subsection.6.2}
-\contentsline {subsection}{\numberline {6.3}Code listings}{23}{subsection.6.3}
-\contentsline {section}{\numberline {7}Conclusion and Further Directions}{23}{section.7}
+\contentsline {subsection}{\numberline {6.3}Code listings}{24}{subsection.6.3}
+\contentsline {section}{\numberline {7}Conclusion and Further Directions}{24}{section.7}

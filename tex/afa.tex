@@ -166,7 +166,7 @@ For this reason, one can see that the shape of AFAs is like a negation-normal fo
 The translation from LDL to AFAs given in \cite{ldlf} is as follows:
 
 ...
-firstly LDL must be put into negation normal form.
+firstly LDL must be put into negation normal form (NNF).
 This can be done in linear time.
 
 \par Programs:
@@ -188,3 +188,17 @@ The transition function is recursively defined over the structure of states
 (which are formulae).
 Due to the formulae being in nnf, there is some ``repetitiveness'' due to duality
 in the definition.
+{\newcommand{\autphi}{\mathcal{A}_\vphi}
+
+We translate an \ldlf formulae $\vphi$ into an AFA $\autphi$
+thus:
+$ \autphi = (2^\prop, CL_\vphi, \vphi, \delta, \set{})$.
+$2^\prop$ is the alphabet of possible trace elements,
+$CL_\vphi$ the state set, the formula $\vphi$ is the initial state,
+transition function $\delta$ is defined below,
+the set of final states is empty (acceptance or rejection depends on
+transitions to $true$ and $false$).
+
+\input{./tex/code/ldl_to_afa.tex}
+
+}
