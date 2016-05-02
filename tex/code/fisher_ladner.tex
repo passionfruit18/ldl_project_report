@@ -1,0 +1,28 @@
+\begin{figure}
+\begin{framed}
+\begin{center}
+Propositional:
+\\\mbox{
+  \inference[init]{}{\vphi} (original)
+  $\quad$ \inference[negation]{\psi}{\neg\psi} (if $\psi$ not of the form $\neg\psi'$)
+  $\quad$ \inference[conjunction]{\vphi_1 \land \vphi_2}
+                          {\vphi_1, \vphi_2}
+}
+\\Modalities (base):
+\\\mbox{
+  \inference[formula]{\di{\rho}\vphi}{\vphi}
+  $\quad$ \inference[propositional]{\di{\phi}\vphi}{\phi} ($\phi$ propositional)
+  $\quad$ \inference[test]{\di{\psi?}\vphi}{\psi}
+}
+\\Modalities (inductive):
+\\\mbox{
+  \inference[concatenation]{\di{\rho_1;\rho_2}\vphi}{\di{\rho_1}\di{\rho_2}\vphi}
+  $\quad$ \inference[addition]{\di{\rho_1 + \rho_2}\vphi}{\di{\rho_1}\vphi, \di{\rho_2}\vphi}
+  $\quad$ \inference[star]{\di{\rho^*}\vphi}{\di{\rho}\di{\rho^*}\vphi}
+}
+\end{center}
+\end{framed}
+\caption{Fisher-Ladner closure of $\vphi$. Note that some rules have multiple
+outputs (e.g. conjunction).\label{fig:fisher_ladner_closure}}
+
+\end{figure}

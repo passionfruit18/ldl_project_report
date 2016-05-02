@@ -93,49 +93,52 @@ $\vphi \to \di{x} \psi$.)
 Here we list all the syntax and semantics of PDL for convenience.
 \break
 \begin{framed}
-\par \textbf{Syntax:}
-\par Programs:
-\begin{myGrammar}
-$\prog$: $\prog_0$; $\vphi?$; $\prog$ + $\prog$; $\prog$ \semi $\prog$; $\prog^*$
-\end{myGrammar}
-\par Formulae:
-\begin{myGrammar}
-$\vphi$: $\A$; $\neg \vphi$; $\vphi \lor \vphi$; $\di{\prog}\vphi$
-\end{myGrammar}
-\par \textbf{Semantics:}
-\par Models: $\model = (W,\set{x_\model}_{x \in \prog_0}, V)$
-where $W$ is a set of states (worlds),
-$x_\model$ are the interpretations of each atomic program, and $V(A)(w)$ is true iff proposition $A$ holds at state $w$.
+  \par \textbf{Syntax:}
+  \par Programs:
+  \begin{myGrammar}
+  $\prog$: $\prog_0$; $\vphi?$; $\prog$ + $\prog$; $\prog$ \semi $\prog$; $\prog^*$
+  \end{myGrammar}
 
-Interpretation of programs:
-\begin{itemize}
-\item Base cases: \[
-  R_\model(x)=\begin{cases}
-               x_\model \quad \text{if $x$ is an atomic program}\\
-               \set{(w,w) | \model,w \models \vphi } \quad \text{if $x = \vphi?$}\\
-            \end{cases}
-\]
+  \par Formulae:
+  \begin{myGrammar}
+  $\vphi$: $\A$; $\neg \vphi$; $\vphi \lor \vphi$; $\di{\prog}\vphi$
+  \end{myGrammar}
 
-\item Regular operations:\\
-\mbox{\inference[add(L)]{u\ x_\model\ v}
-                        {u\ (x+y)_\model\ v}
-$\quad$ \inference[add(R)]{u\ x_\model\ v}
-                         {u\ (y+x)_\model\ v}
-$\quad$ \inference[concat]{u\ x_\model\ v & v\ y_\model\ w}
-                          {u\ (x;y)_\model\ w}
-}
-\\
+  \par \textbf{Semantics:}
+  \par Models: $\model = (W,\set{x_\model}_{x \in \prog_0}, V)$
+  where $W$ is a set of states (worlds),
+  $x_\model$ are the interpretations of each atomic program, and $V(A)(w)$ is true iff proposition $A$ holds at state $w$.
 
-\mbox{\inference[star(Reflexive)]{}{u\ (x^*)_\model\ u}$\quad$
-      \inference[star(Transitive)]{u\ x_\model\ v & v\ (x^*)_\model\ w}
-                            {u\ (x^*)_\model\ w}}
-\end{itemize}
-\par Entailment of formulae:
-\begin{itemize}
-\item $\model,w \models A$ iff $V(A)(w)$ for propositional $A$.
-\item The cases for $\neg$ and $\lor$ are as usual, staying at the same state.
-\item $\model,w \models \di{x}\vphi$ iff there exists $v$ such that $ w\ R_\model(x)\ v$ and $\model, v \models \vphi$
-\end{itemize}
+  Interpretation of programs:
+  \begin{itemize}
+    \item Base cases: \[
+      R_\model(x)=\begin{cases}
+                   x_\model \quad \text{if $x$ is an atomic program}\\
+                   \set{(w,w) | \model,w \models \vphi } \quad \text{if $x = \vphi?$}\\
+                \end{cases}
+    \]
+
+    \item Regular operations:\\
+    \mbox{\inference[add(L)]{u\ x_\model\ v}
+                            {u\ (x+y)_\model\ v}
+    $\quad$ \inference[add(R)]{u\ x_\model\ v}
+                             {u\ (y+x)_\model\ v}
+    $\quad$ \inference[concat]{u\ x_\model\ v & v\ y_\model\ w}
+                              {u\ (x;y)_\model\ w}
+    }
+    \\
+
+    \mbox{\inference[star(Reflexive)]{}{u\ (x^*)_\model\ u}$\quad$
+          \inference[star(Transitive)]{u\ x_\model\ v & v\ (x^*)_\model\ w}
+                                {u\ (x^*)_\model\ w}}
+  \end{itemize}
+
+  \par Entailment of formulae:
+  \begin{itemize}
+    \item $\model,w \models A$ iff $V(A)(w)$ for propositional $A$.
+    \item The cases for $\neg$ and $\lor$ are as usual, staying at the same state.
+    \item $\model,w \models \di{x}\vphi$ iff there exists $v$ such that $ w\ R_\model(x)\ v$ and $\model, v \models \vphi$
+  \end{itemize}
 \end{framed}
 \subsection{\ldlf in terms of PDL}
 

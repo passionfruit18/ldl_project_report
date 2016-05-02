@@ -179,8 +179,9 @@ $\vphi$: $\A$; $\neg\A$;  $\vphi \lor \vphi$; $\vphi \land \vphi$; $\di{\prog}\v
 \end{myGrammar}
 
 The states of the automaton corresponding to $\vphi$ will be the
-Fischer-Ladner closure $CL_\vphi$, a generalisation of subformula closure...
-\red{Type out definition of Fischer-Ladner..}
+Fischer-Ladner closure $CL_\vphi$, a generalisation of subformula closure (see figure \ref{fig:fisher_ladner_closure})
+\input{./tex/code/fisher_ladner.tex}
+
 The automaton produced will have no final states; acceptance is by
 transition to ``true'' ($\delta(\vphi,\Pi)=true$).
 The transition function is recursively defined over the structure of states

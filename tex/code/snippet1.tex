@@ -1,0 +1,3 @@
+\begin{code}
+> ltl2aut (Until f1 f2) = (dStar $ ltl2aut f1) `dConc` ltl2aut f2
+\end{code}

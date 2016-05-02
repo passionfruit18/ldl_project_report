@@ -1,0 +1,77 @@
+\begin{printout}
+====================================================================================================
+LDL: [c][(a + b)]True
+------------------------------------------------------------
+AFA: Alphabet: {{}, {a}, {a, b}, {a, b, c}, {a, c}, {b}, {b, c}, {c}}
+States: {True, [c][(a + b)]True, [(a + b)]True}
+Init: [c][(a + b)]True
+Transition: True X {} -> True
+True X {a} -> True
+True X {a, b} -> True
+True X {a, b, c} -> True
+True X {a, c} -> True
+True X {b} -> True
+True X {b, c} -> True
+True X {c} -> True
+[c][(a + b)]True X {} -> True
+[c][(a + b)]True X {a} -> True
+[c][(a + b)]True X {a, b} -> True
+[c][(a + b)]True X {a, b, c} -> state([(a + b)]True)
+[c][(a + b)]True X {a, c} -> state([(a + b)]True)
+[c][(a + b)]True X {b} -> True
+[c][(a + b)]True X {b, c} -> state([(a + b)]True)
+[c][(a + b)]True X {c} -> state([(a + b)]True)
+[(a + b)]True X {} -> (True && True)
+[(a + b)]True X {a} -> (state(True) && True)
+[(a + b)]True X {a, b} -> (state(True) && state(True))
+[(a + b)]True X {a, b, c} -> (state(True) && state(True))
+[(a + b)]True X {a, c} -> (state(True) && True)
+[(a + b)]True X {b} -> (True && state(True))
+[(a + b)]True X {b, c} -> (True && state(True))
+[(a + b)]True X {c} -> (True && True)
+
+Final: {}
+
+------------------------------------------------------------
+NFA: Alphabet: {{}, {a}, {a, b}, {a, b, c}, {a, c}, {b}, {b, c}, {c}}
+States: {{}, {True}, {[c][(a + b)]True}, {[(a + b)]True}}
+Init: {[c][(a + b)]True}
+Transition: {} X {} -> {{}}
+{} X {a} -> {{}}
+{} X {a, b} -> {{}}
+{} X {a, b, c} -> {{}}
+{} X {a, c} -> {{}}
+{} X {b} -> {{}}
+{} X {b, c} -> {{}}
+{} X {c} -> {{}}
+{True} X {} -> {{}}
+{True} X {a} -> {{}}
+{True} X {a, b} -> {{}}
+{True} X {a, b, c} -> {{}}
+{True} X {a, c} -> {{}}
+{True} X {b} -> {{}}
+{True} X {b, c} -> {{}}
+{True} X {c} -> {{}}
+{[c][(a + b)]True} X {} -> {{}}
+{[c][(a + b)]True} X {a} -> {{}}
+{[c][(a + b)]True} X {a, b} -> {{}}
+{[c][(a + b)]True} X {a, b, c} -> {{[(a + b)]True}}
+{[c][(a + b)]True} X {a, c} -> {{[(a + b)]True}}
+{[c][(a + b)]True} X {b} -> {{}}
+{[c][(a + b)]True} X {b, c} -> {{[(a + b)]True}}
+{[c][(a + b)]True} X {c} -> {{[(a + b)]True}}
+{[(a + b)]True} X {} -> {{}}
+{[(a + b)]True} X {a} -> {{True}}
+{[(a + b)]True} X {a, b} -> {{True}}
+{[(a + b)]True} X {a, b, c} -> {{True}}
+{[(a + b)]True} X {a, c} -> {{True}}
+{[(a + b)]True} X {b} -> {{True}}
+{[(a + b)]True} X {b, c} -> {{True}}
+{[(a + b)]True} X {c} -> {{}}
+
+Final: {{}}
+
+------------------------------------------------------------
+Satisfiable? According to NFA's final state set, yes
+====================================================================================================
+\end{printout}

@@ -1,19 +1,19 @@
 
+\clearpage
 \section {Implementation of Satisfiability Algorithm}
 \subsection{Description}
 
-As for the practical part of the project, well.
-It involved encoding all the above formalisms
-and then straightforwardly writing in the translations.
+The practical part of the project involved encoding all the above formalisms
+and then writing in the translations.
 The most difficult part was choosing the right encodings.
 
 As an approximation to the problem I tried writing a Haskell program to decide satisfiability for LTL.
 
 I wrote a haskell program to try to answer the satisfiability question for LTL.
-I did this by translating LTL formulae into equivalent deterministic finite automata, using basic automata and combinators, and testing for emptiness. For example, I translated $\phi$ Until $\psi$ as:
-\begin{code}
-> ltl2aut (Until f1 f2) = (dStar \$ ltl2aut f1) `dConc` ltl2aut f2
-\end{code}
+I did this by translating LTL formulae into equivalent deterministic finite automata,
+using basic automata and combinators, and testing for emptiness.
+For example, I translated $\phi$ Until $\psi$ as:
+\input{./tex/code/snippet1.tex}
 i.e. $ ltl2aut(\phi)^* \cdot ltl2aut(\psi) $.
 But this was an error (I copied the translation of LTL to LDL in \cite{ldlf} which incorrectly translated $ f(\phi \, \mathcal{U} \, \psi) $ to $\langle f(\phi)^* \rangle f(\psi)$).
 The correct translation of $ f(\phi \, \mathcal{U} \, \psi) $ into LDL is $\langle (f(\phi)?true)^* \rangle f(\psi)$. It doesn't seem simple to translate this directly to a DFA. So it makes sense to translate it (through LDL) to an AFA, as shown in \cite{ldlf}.
@@ -60,12 +60,27 @@ Here is an example of my program...
 the stages of data structures passed through on the way
 to satisfiability.
 do I need to construct this by hand?
-\red{
-Formula:
-\\AFA
-\\NFA
-\\Empty?
-}
+I will show the output of my program for three different example formulae.
+
+The first is actually a translation of an \ltlf formula
+$(\lnext\lnext a) \luntil b$. Its translation is
+$\di{(\di{true;true}a?;true)^*}b$.
+Figures \ref{fig:until_printout_afa} and \ref{fig:until_printout_nfa}
+show the output of the program
+I have written, which translates the \ldlf formula into an AFA and thence into an NFA.
+Satisfiability can be determined by looking at the final state set of the NFA, since
+the program constructs only the reachable states of the automaton.
+If the final state set is nonempty, then the formula is satisfiable.
+Figure \ref{fig:until_afa} is a diagram of the AFA detailed in \ref{fig:until_printout_afa}.
+Figure \ref{fig:until_afa_simp} simplifies the $\lor$s out of the automaton
+by rules of logical equivalence.
+Looking at figure \ref{fig:until_afa_simp} we can see that
+the trace $\set{}\set{}\set{b}$ would cause the automaton
+to fail. After consuming $\set{}$, $\set{}\set{b}$ must be accepted from $q_2$,
+since we go via a $\land$ node. But $\set{}\set{b}$ leads the automaton exactly
+into the $False$ transition. Thus the whole run fails. Indeed, we can see that
+$\set{}\set{}\set{b} \not\models \lnext\lnext a$ and also $\not\models b$, so this is to be expected.
+\input{./tex/code/until_printout.tex}
 
 \subsection{Evaluation and Comparison to existing tools}
 
